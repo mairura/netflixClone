@@ -97,7 +97,10 @@ const Auth = () => {
               <div className="h-10 w-10 rounded-full bg-white flex justify-center items-center cursor-pointer hover:opacity-80 transition">
                 <FcGoogle size={30} />{" "}
               </div>
-              <div className="h-10 w-10 rounded-full bg-white flex justify-center items-center cursor-pointer hover:opacity-80 transition">
+              <div
+                onClick={() => signIn("github", { callbackUrl: "/" })}
+                className="h-10 w-10 rounded-full bg-white flex justify-center items-center cursor-pointer hover:opacity-80 transition"
+              >
                 <FaGithub size={30} />{" "}
               </div>
             </div>
