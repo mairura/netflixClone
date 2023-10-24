@@ -1,14 +1,12 @@
 import Input from "@/components/Input";
+import axios from "axios";
 import { useCallback, useState } from "react";
-import axios from 'axios';
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
 const Auth = () => {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -26,15 +24,12 @@ const Auth = () => {
       await signIn("credentials", {
         email,
         password,
-        redirect: false,
-        callbackUrl: "/",
+        callbackUrl: "/profiles",
       });
-
-      router.push("/");
     } catch (error) {
       console.log(error);
     }
-  }, [email, password, router]);
+  }, [email, password]);
 
   const register = useCallback(async () => {
     try {
@@ -58,20 +53,19 @@ const Auth = () => {
         </nav>
         <div className="flex justify-center">
           <div className="bg-black bg-opacity-70 px-16 py-16 self-center mt-2 lg:w-2/5 lg:max-w-md rounded-md w-full">
-            <h2 className="text-white text-4xl font-semibold mb-8">
+            <h2 className="text-white text-4xl mb-8 font-semibold">
               {variant === "login" ? "Sign in" : "Register"}
             </h2>
             <div className="flex flex-col gap-4">
               {variant === "register" && (
                 <Input
-                  label="Username"
+                  label="Name"
                   onChange={(event: any) => setName(event.target.value)}
                   id="name"
-                  type="text"
+                  type="name"
                   value={name}
                 />
               )}
-
               <Input
                 label="Email"
                 onChange={(event: any) => setEmail(event.target.value)}
@@ -79,6 +73,7 @@ const Auth = () => {
                 type="email"
                 value={email}
               />
+
               <Input
                 label="Password"
                 onChange={(event: any) => setPassword(event.target.value)}
@@ -88,29 +83,35 @@ const Auth = () => {
               />
             </div>
             <button
-              onClick={variant == "login" ? login : register}
+              onClick={variant === "login" ? login : register}
               className="bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-700"
             >
-              {variant === "login" ? "Login" : "Sign up"}
+              {variant === "login" ? "Login" : "Sign Up"}
             </button>
-            <div className="flex flex-row items-center gap-4 mt-8 justify-center">
-              <div className="h-10 w-10 rounded-full bg-white flex justify-center items-center cursor-pointer hover:opacity-80 transition">
-                <FcGoogle size={30} />{" "}
+
+            <div
+              onClick={() => signIn("google", { callbackUrl: "/profiles" })}
+              className="flex flex-row items-center gap-4 mt-8 justify-center"
+            >
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition">
+                <FcGoogle size={30} />
               </div>
+
               <div
-                onClick={() => signIn("github", { callbackUrl: "/" })}
-                className="h-10 w-10 rounded-full bg-white flex justify-center items-center cursor-pointer hover:opacity-80 transition"
+                onClick={() => signIn("github", { callbackUrl: "/profles" })}
+                className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
               >
-                <FaGithub size={30} />{" "}
+                <FaGithub size={30} />
               </div>
             </div>
+
             <p className="text-neutral-500 mt-12">
               {variant === "login"
-                ? "First Time using Netflix?"
-                : "Already have an account?"}
+                ? "First time using Netflix?"
+                : "Already have an account "}
               <span
                 onClick={toggleVariant}
-                className="text-white hover:underline cursor-pointer ml-1"
+                className="text-white ml-1 hover:underline cursor-pointer"
               >
                 {variant === "login" ? "Create an account" : "Login"}
               </span>
