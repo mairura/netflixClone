@@ -24,6 +24,7 @@ const Profiles = () => {
   const router = useRouter();
 
   const { data: user } = useCurrentUser();
+
   
   return (
     <div className="flex items-center h-full justify-center">
