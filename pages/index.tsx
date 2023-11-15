@@ -1,6 +1,7 @@
 import Billboard from "@/components/Billboard";
 import MovieList from "@/components/MovieList";
 import Navbar from "@/components/Navbar";
+import useFavorites from "@/hooks/useFavorites";
 import useMovieList from "@/hooks/useMovieList";
 import { NextPageContext } from "next";
 import { getSession } from "next-auth/react";
@@ -26,13 +27,16 @@ export default function Home() {
   const { data: movies = [] } = useMovieList();
   console.log("Get from hook", movies);
 
-  
+  const { data: favorites } = useFavorites();
+  console.log("Get favorite movie", favorites);
+
   return (
     <>
       <Navbar />
       <Billboard />
       <div className="pb-40">
         <MovieList title="Trending Now" data={movies} />
+        <MovieList title="My List" data={favorites} />
       </div>
     </>
   );
