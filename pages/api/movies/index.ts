@@ -20,7 +20,5 @@ export default async function handler(
   } catch (error: any) {
     console.error("Error:", error.message);
     return res.status(500).end();
-  } finally {
-    await prismadb.$disconnect();
   }
 }
