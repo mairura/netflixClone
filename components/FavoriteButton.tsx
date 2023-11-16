@@ -1,6 +1,7 @@
-import React, { useCallback, useMemo } from "react";
 import axios from "axios";
+import React, { useCallback, useMemo } from "react";
 import { AiOutlineCheck, AiOutlinePlus } from "react-icons/ai";
+
 import useFavorites from "@/hooks/useFavorites";
 import useCurrentUser from "@/hooks/useCurrentUser";
 
@@ -14,34 +15,45 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ movieId }) => {
   const { data: currentUser, mutate } = useCurrentUser();
 
   const isFavorite = useMemo(() => {
-    const list = currentUser?. favouriteIds || [];
+    const list = currentUser?.favouriteIds || [];
 
     return list.includes(movieId);
   }, [currentUser, movieId]);
 
+  console.log("isFavorite", isFavorite);
+
+  // Inside toggleFavorites
   const toggleFavorites = useCallback(async () => {
-    let response;
+    try {
+      let response;
 
-    if (isFavorite) {
-      response = await axios.delete("/api/favorite", {
-        data: {
+      if (isFavorite) {
+        response = await axios.delete("/api/favorite", {
+          data: {
+            movieId,
+          },
+        });
+      } else {
+        response = await axios.post("/api/favorite", {
           movieId,
-        },
-      });
-    } else {
-      response = await axios.post("/api/favorite", {
-        movieId,
-      });
+        });
+      }
+
+      const updatedFavorites = response?.data?.favoriteIds;
+
+      if (updatedFavorites !== undefined) {
+        mutate({
+          ...currentUser,
+          favouriteIds: updatedFavorites,
+        });
+
+        mutateFavorites();
+      } else {
+        console.error("Unexpected response data:", response);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    const updatedFavorites = response?.data?.favouriteIds;
-
-    mutate({
-      ...currentUser,
-      favouriteIds: updatedFavorites,
-    });
-
-    mutateFavorites();
   }, [movieId, isFavorite, currentUser, mutate, mutateFavorites]);
 
   const Icon = isFavorite ? AiOutlineCheck : AiOutlinePlus;

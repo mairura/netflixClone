@@ -9,13 +9,13 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    if (req.method === "POST") {
-      const { currentUser } = await serverAuth(req);
+    const { currentUser } = await serverAuth(req);
 
-      console.log("Current user", currentUser);
-
+    if (req.method === "POST" || req.method === "DELETE") {
       const { movieId } = req.body;
-
+      
+      // Validate movieId format before querying the database
+      
       const existingMovie = await prismadb.movie.findUnique({
         where: {
           id: movieId,
@@ -23,39 +23,15 @@ export default async function handler(
       });
 
       if (!existingMovie) {
-        throw new Error("Invalid ID");
+        throw new Error("Movie not found or invalid ID");
       }
 
-      const user = await prismadb.user.update({
-        where: {
-          email: currentUser.email || "",
-        },
-        data: {
-          favouriteIds: {
-            push: movieId,
-          },
-        },
-      });
-
-      return res.status(200).json(user);
-    }
-
-    if (req.method === "DELETE") {
-      const { currentUser } = await serverAuth(req);
-
-      const { movieId } = req.body;
-
-      const existingMovie = await prismadb.movie.findUnique({
-        where: {
-          id: movieId,
-        },
-      });
-
-      if (!existingMovie) {
-        throw new Error("Invalid ID");
+      let updatedFavoriteIds;
+      if (req.method === "POST") {
+        updatedFavoriteIds = [...currentUser.favouriteIds, movieId];
+      } else if (req.method === "DELETE") {
+        updatedFavoriteIds = without(currentUser.favouriteIds, movieId);
       }
-
-      const updatedFavoriteIds = without(currentUser.favouriteIds, movieId);
 
       const updatedUser = await prismadb.user.update({
         where: {
@@ -69,10 +45,9 @@ export default async function handler(
       return res.status(200).json(updatedUser);
     }
 
-    return res.status(405).end();
+    return res.status(405).end("Method not allowed");
   } catch (error) {
-    console.log(error);
-
-    return res.status(500).end();
+    console.error("Handler Error:", error);
+    return res.status(500).end("Internal Server Error");
   }
 }

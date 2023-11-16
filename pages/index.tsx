@@ -25,10 +25,10 @@ export async function getServerSideProps(context: NextPageContext) {
 
 export default function Home() {
   const { data: movies = [] } = useMovieList();
-  console.log("Get from hook", movies);
+  // console.log("Get from hook", movies);
 
   const { data: favorites } = useFavorites();
-  console.log("Get favorite movie", favorites);
+  // console.log("Get favorite movie", favorites);
 
   return (
     <>
