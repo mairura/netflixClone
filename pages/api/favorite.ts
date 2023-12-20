@@ -13,10 +13,11 @@ export default async function handler(
 
     if (req.method === "POST" || req.method === "DELETE") {
       const { movieId } = req.body;
-      console.log("movieId in Fav++++", movieId)
-      
+
+      console.log("movieId in Favourite++++", movieId);
+
       // Validate movieId format before querying the database
-      
+
       const existingMovie = await prismadb.movie.findUnique({
         where: {
           id: movieId,

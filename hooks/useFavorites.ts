@@ -7,7 +7,7 @@ const useFavorites = () => {
     revalidateOnFocus: false,
     revalidateOnMount: false,
   });
-  console.log("Data from useFavorites", data);
+  // console.log("Data from useFavorites", data);
   return {
     data,
     error,

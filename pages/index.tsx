@@ -29,7 +29,7 @@ export default function Home() {
   const { data: movies = [] } = useMovieList();
   // console.log("Get from hook", movies);
 
-  const { data: favorites } = useFavorites();
+  const { data: favorites = [] } = useFavorites();
   // console.log("Get favorite movie", favorites);
 
   const { isOpen, closeModal } = useInfoModal();
